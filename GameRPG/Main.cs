@@ -112,7 +112,7 @@ namespace GameRPG
 
             //Персонажи
             Hero = new Hero(
-                20, //HP 
+                200, //HP 
                 20, //MP
                 200, //MaxHP
                 20,  //MaxMP
