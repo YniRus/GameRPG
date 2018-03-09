@@ -210,7 +210,7 @@ namespace GameRPG
                 new Rectangle(0, 640, WinWidth, 720),
                 20,0, //MarginX,Y
                 48, //SkillSize
-                10 //Кол-во скилов
+                9 //Кол-во скилов
                 );
 
             Skill = new Skill[SkillPanel.MaxSkillCount];
@@ -283,23 +283,6 @@ namespace GameRPG
                 Content.Load<SoundEffect>("sound/Satanic")
                 );
             SkillPanel.SkillCount++;
-
-            Skill[SkillPanel.SkillCount] = new Skill(
-                "Положительный эффект \nНа 12 секунд Скорость +6. \nМанакост: 5   КД: 12 секунд",
-                new Button(
-                    SkillPanel.GetRect(),
-                    Content.Load<Texture2D>("img/skills/Boost"),
-                    true
-                    ),
-                new Effect[] {
-                    new Effect("Speed",+6,"Hero",12,true),
-                    new Effect("MP",-5,"Hero")
-                },
-                12, //КД
-                12,
-                Content.Load<SoundEffect>("sound/PhaseBoots")
-                );
-                SkillPanel.SkillCount++;
 
             Skill[SkillPanel.SkillCount] = new Skill(
                 "Восстановление \nВосстанавливает 7 МП \nМанакост: 0   КД: 10 секунд",
@@ -655,6 +638,13 @@ namespace GameRPG
 
                     ButtonSaveAndExit.Visible = true;
 
+                    if (SoundOnes)
+                    {
+                        MediaPlayer.Pause();
+                        HeroDeath.Play();
+                        SoundOnes = false;
+                    }
+
                     if (ButtonSaveAndExit.ButtonUp)
                     {
                         SaveResult();
@@ -672,16 +662,6 @@ namespace GameRPG
 
                     GameTimer.Update(gameTime);
                     Hero.Update(Window, gameTime);
-
-                    if(Hero.State == 3)
-                    {
-                        if (SoundOnes)
-                        {
-                            MediaPlayer.Pause();
-                            HeroDeath.Play();
-                            SoundOnes = false;
-                        }
-                    }
 
                     if (Hero.onJump)
                     {
