@@ -52,16 +52,7 @@ namespace GameRPG
                         CurrentTime = 0;
                         CurrentFrame = 0;
                     }
-                }
-                //Нажата кнопка ВВВЕРХ
-                else if (kbState.IsKeyDown(Keys.Space))
-                {
-                    if (Rectangle.X < Window.ClientBounds.Width - FrameWidth)
-                    {
-                        State = 4;
-                        onJump = true;
-                    }
-                }
+                }                
                 //Ничего не нажато
                 else
                 {
@@ -72,6 +63,16 @@ namespace GameRPG
                         CurrentFrame = 0;
                     }
                 }
+                //Нажат ПРОБЕЛ
+                if (kbState.IsKeyDown(Keys.Space))
+                {
+                    if (Rectangle.X < Window.ClientBounds.Width - FrameWidth)
+                    {
+                        State = 4;
+                        onJump = true;
+                    }
+                }
+
             }
         }
     }

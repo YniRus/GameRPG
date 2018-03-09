@@ -772,3 +772,21 @@
 /processorParam:TextureFormat=Color
 /build:img/skills/IseDagerShot.png
 
+#begin sound/PhaseBoots.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/PhaseBoots.wav
+
+#begin img/skills/Boost.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/skills/Boost.jpg
+
