@@ -93,6 +93,11 @@ namespace GameRPG
             {
                 Active = true;
 
+                KDRemaind.Closed = true;
+            }
+
+            if(KDRemaind.Closed)
+            {
                 //Обновляем состояния скилов по запасу маны
                 for (int i = 0; i < Effect.Length; i++)
                 {
@@ -102,8 +107,6 @@ namespace GameRPG
                         else Active = true;
                     }
                 }
-
-                KDRemaind.Closed = true;
             }
 
             if(TimeActiveRemaind.isEnd && !TimeActiveRemaind.Closed)
