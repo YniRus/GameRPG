@@ -67,6 +67,7 @@ namespace GameRPG
             if (JumpFrame == JumpCountFrame)
             {
                 onJump = false;
+                State = 0;
                 JumpFrame = 0;
             }   
         }
