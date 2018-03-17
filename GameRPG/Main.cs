@@ -31,7 +31,7 @@ namespace GameRPG
         public bool CanRunLeft, CanRunRight;
 
         Sprite Bg;
-        Sprite GoldPanel,TimePanel;
+        Sprite GoldPanel,TimePanel,RemindPanel;
         Sprite WinMessage, DeathMessage;
 
         StartWindow StartWindow;
@@ -40,14 +40,17 @@ namespace GameRPG
 
         Timer GameTimer;
         Label GoldCount;
-
-        Label EndMessage;
+        Label TimeRemindLabel;
 
         Label Level;
         int[] LevelEnd = { 2, 5, 6 };
         int CurrentLevel = 0;
         bool LevelIsEnd = false;
         bool GameIsEnd = false;
+
+        public bool TimeIsRemind = false;
+        int TimeRemind = 30;
+        ProgramTimer TimerRemind;
 
         Button ButtonSaveAndExit,ButtonContinue;
 
@@ -90,6 +93,15 @@ namespace GameRPG
             base.Initialize();
         }
 
+        public void RestartGame()
+        {
+            LoadContent();
+            CurrentLevel = 0;
+            LevelIsEnd = false;
+            GameIsEnd = false;
+            SoundOnes = true;
+        }
+
         protected override void LoadContent()
         {
 
@@ -109,6 +121,10 @@ namespace GameRPG
 
             TimePanel = new Sprite(Content.Load<Texture2D>("img/Windows/Battle/TimePanel"));
             TimePanel.Rectangle = new Rectangle(WinWidth - 2 * (10 + TimePanel.Texture.Width), 10, TimePanel.Texture.Width, TimePanel.Texture.Height);
+
+            RemindPanel = new Sprite(Content.Load<Texture2D>("img/Windows/Battle/TimeRemind"));
+            RemindPanel.Rectangle = new Rectangle(WinWidth - 3 * (10 + RemindPanel.Texture.Width), 10, RemindPanel.Texture.Width, RemindPanel.Texture.Height);
+
 
             //Персонажи
             Hero = new Hero(
@@ -180,6 +196,7 @@ namespace GameRPG
             GameTimer = new Timer(Content.Load<SpriteFont>("fonts/GameTime"), new Vector2(TimePanel.Rectangle.X + 130, TimePanel.Rectangle.Y), "00:00");
             GoldCount = new Label(Content.Load<SpriteFont>("fonts/GameTime"), new Vector2(GoldPanel.Rectangle.X + 150, GoldPanel.Rectangle.Y), "0");
             Level = new Label(Content.Load<SpriteFont>("fonts/GameTime"), new Vector2(20, 10), "");
+            TimeRemindLabel = new Label(Content.Load<SpriteFont>("fonts/GameTime"), new Vector2(RemindPanel.Rectangle.X + 150, RemindPanel.Rectangle.Y), "0");
 
             StatHero.Title = new Label(
                 Content.Load<SpriteFont>("fonts/Stat"),
@@ -641,6 +658,24 @@ namespace GameRPG
         {
             if(!GameIsEnd) Level.Text = "Уровень " + (CurrentLevel + 1).ToString();
 
+            if(CurrentLevel == 2 && TimeIsRemind && !LevelIsEnd)
+            {
+                TimeRemind = 20;
+                TimerRemind = new ProgramTimer(20);
+                TimeIsRemind = false;
+            }
+            if (TimerRemind != null && !LevelIsEnd)
+            {
+                TimerRemind.Update(gameTime);
+                TimeRemindLabel.Text = Convert.ToString(TimeRemind - TimerRemind.GetSS());
+
+                if(TimerRemind.isEnd)
+                {
+                    Hero.HP = 0;
+                }
+            }
+            
+
             ButtonContinue.Update(gameTime);
             ButtonSaveAndExit.Update(gameTime);
 
@@ -658,7 +693,7 @@ namespace GameRPG
                     if (ButtonSaveAndExit.ButtonUp)
                     {
                         SaveResult();
-                        Exit();
+                        RestartGame();
                     }
 
                     Enemy.CurrentFrame = 0;
@@ -689,6 +724,8 @@ namespace GameRPG
                         Hero.Jump();
                     }
 
+                    if (Hero.State == 2) Hero.Animate(gameTime);
+
                     //протиуник может умереть от шота
                     if (Enemy.HP <= 0 && Enemy.State != 3)
                     {
@@ -705,19 +742,12 @@ namespace GameRPG
                         // Взаимодействие персонажа и противника
                         if (Enemy.Rectangle.Intersects(Hero.Rectangle))
                         {
-                            if (Hero.State == 1 || Hero.State == 0)
-                            {
-                                Hero.CurrentTime = 0;
-                                Hero.CurrentFrame = 0;
-                                Hero.State = 2;
-                            }
                             CheckRun();
                             Enemy.DoAttack(Window, gameTime);
-                            if (Hero.State == 2 || Hero.State == 0) Hero.DoAttack(Window, gameTime);
                             if (Enemy.CurrentFrame == 11 && Enemy.State == 2) //При завершении анимации заверщаем удар
                             {
                                 EnemyAttack.Play();
-                                if (Enemy.Attack >= Hero.Def)
+                                if (Enemy.Attack > Hero.Def)
                                     Hero.HP -= Enemy.Attack - Hero.Def;
                                 else
                                     Hero.HP--;
@@ -728,7 +758,7 @@ namespace GameRPG
                             if (Hero.CurrentFrame == 11 && Hero.State == 2) //При завершении анимации заверщаем удар
                             {
                                 HeroAttack.Play();
-                                if (Hero.Attack >= Enemy.Def)
+                                if (Hero.Attack > Enemy.Def)
                                     Enemy.HP -= Hero.Attack - Enemy.Def;
                                 else
                                     Enemy.HP--;
@@ -776,7 +806,7 @@ namespace GameRPG
                 if (ButtonSaveAndExit.ButtonUp)
                 {
                     SaveResult();
-                    Exit();
+                    RestartGame();
                 }
             }
 
@@ -844,6 +874,8 @@ namespace GameRPG
                     //Переход на следующий уровень
                     LevelIsEnd = true;
                     CurrentLevel++;
+
+                    if (CurrentLevel == 2) TimeIsRemind = true;
 
                     if (CurrentLevel >= LevelEnd.Length)
                     {
@@ -999,6 +1031,11 @@ namespace GameRPG
                 spriteBatch.Draw(Bg.Texture, Bg.Rectangle, Color.White);
                 spriteBatch.Draw(GoldPanel.Texture, GoldPanel.Rectangle, Color.White);
                 spriteBatch.Draw(TimePanel.Texture, TimePanel.Rectangle, Color.White);
+                if (CurrentLevel == 2)
+                {
+                    spriteBatch.Draw(RemindPanel.Texture, RemindPanel.Rectangle, Color.White);
+                    TimeRemindLabel.Draw(spriteBatch,Color.White);
+                }
 
                 for (int i = 0; i < Skill.Length; i++)
                     Skill[i].Draw(spriteBatch, Window);

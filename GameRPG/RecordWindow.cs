@@ -20,6 +20,8 @@ namespace GameRPG
         Label RecordHeader;
 
         public Label[,] Record;
+        string[,] UnsortedRecord;
+        int LastResultID;
 
         int CurrentLine = 0;
         int LineCount = 0;
@@ -40,6 +42,8 @@ namespace GameRPG
             LineCount = File.ReadAllLines("Content/Record.txt").Length;
 
             Record = new Label[LineCount, 3];
+
+            UnsortedRecord = new string[LineCount, 3];
 
             for (int i = 0; i < LineCount; i++)
             {
@@ -86,7 +90,6 @@ namespace GameRPG
 
         private void GetRecord()
         {
-
             using (StreamReader File = new StreamReader("Content/Record.txt", Encoding.Default))
             {
                 string Line;
@@ -95,10 +98,46 @@ namespace GameRPG
                     string[] Data = Line.Split(new char[] { ' ' });
 
                     if (Data.Length == 3)
+                    {
                         for (int i = 0; i < 3; i++)
-                            Record[CurrentLine, i].Text = Data[i];
-
+                            UnsortedRecord[CurrentLine, i] = Data[i];
+                    }
                     CurrentLine++;
+                }
+            }
+
+            LastResultID = LineCount - 1;
+
+            for (int i = 0; i < LineCount; i++)
+            {
+                for(int j = 0; j < LineCount; j++)
+                {
+                    if(Convert.ToInt32(UnsortedRecord[i,2]) >= Convert.ToInt32(UnsortedRecord[j,2]))
+                    {
+                        for(int k = 0; k < 3; k++)
+                        {
+                            if(j == LastResultID)
+                            {
+                                LastResultID = i;
+                            }
+
+                           else if (i == LastResultID)
+                            {
+                                LastResultID = j;
+                            }
+                            string temp = UnsortedRecord[i, k];
+                            UnsortedRecord[i, k] = UnsortedRecord[j, k];
+                            UnsortedRecord[j, k] = temp;
+                        }     
+                    }
+                }
+            }
+
+            for (int i = 0; i < LineCount; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    Record[i, j].Text = UnsortedRecord[i, j];
                 }
             }
         }
@@ -172,7 +211,17 @@ namespace GameRPG
                 for (int j = 0; j < 3; j++)
                 {
                     if(Record[i,j].Position.Y + 30 <= RecordPanel.Height + 200 && Record[i, j].Position.Y >= 230)
-                        Record[i,j].Draw(spriteBatch, Color.White);
+                    {
+                        if(i == LastResultID)
+                        {
+                            Record[i, j].Draw(spriteBatch, Color.Gold);
+                        }
+                        else
+                        {
+                            Record[i, j].Draw(spriteBatch, Color.White);
+                        }
+                    }
+                        
                 }
             }
 

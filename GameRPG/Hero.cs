@@ -52,11 +52,20 @@ namespace GameRPG
                         CurrentTime = 0;
                         CurrentFrame = 0;
                     }
-                }                
+                }
+                else if (kbState.IsKeyDown(Keys.Space))
+                {
+                    if(State != 2)
+                    {
+                        CurrentTime = 0;
+                        CurrentFrame = 0;
+                    }
+                    State = 2;
+                }
                 //Ничего не нажато
                 else
                 {
-                    if (State != 0 && State != 3 && State != 2)
+                    if (State != 0 && State != 3)
                     {
                         State = 0;
                         CurrentTime = 0;
@@ -64,9 +73,9 @@ namespace GameRPG
                     }
                 }
                 //Нажат ПРОБЕЛ
-                if (kbState.IsKeyDown(Keys.Space))
+                if (kbState.IsKeyDown(Keys.W))
                 {
-                    if (Rectangle.X < Window.ClientBounds.Width - FrameWidth)
+                    if (Rectangle.X <= Window.ClientBounds.Width - FrameWidth)
                     {
                         State = 4;
                         onJump = true;
