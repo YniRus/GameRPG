@@ -37,7 +37,7 @@ namespace GameRPG
             RecordHeader = new Label(
                 Main.ThisGame.Content.Load<SpriteFont>("fonts/Stat"),
                 new Vector2(340, 205),
-                "Имя                                Время                             Очки");
+                "Имя                                Очки                              Время");
 
             LineCount = File.ReadAllLines("Content/Record.txt").Length;
 
@@ -112,7 +112,7 @@ namespace GameRPG
             {
                 for(int j = 0; j < LineCount; j++)
                 {
-                    if(Convert.ToInt32(UnsortedRecord[i,2]) >= Convert.ToInt32(UnsortedRecord[j,2]))
+                    if(Convert.ToInt32(UnsortedRecord[i,1]) >= Convert.ToInt32(UnsortedRecord[j,1]))
                     {
                         for(int k = 0; k < 3; k++)
                         {

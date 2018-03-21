@@ -153,7 +153,7 @@ namespace GameRPG
                     10, //MP
                     40, //MaxHP
                     10,  //MaxMP
-                    5,  //Attack
+                    50,  //Attack
                     2, //Def
                     3, //Speed
                     10, //AttackSpeed
@@ -1005,7 +1005,7 @@ namespace GameRPG
             using (FileStream fstream = new FileStream("Content/Record.txt", FileMode.Append))
             {
                 // преобразуем строку в байты
-                byte[] array = Encoding.Default.GetBytes(StartWindow.InputName.Text + " " + GameTimer.Text + " " + GoldCount.Text + Environment.NewLine);
+                byte[] array = Encoding.Default.GetBytes(StartWindow.InputName.Text + " " + GoldCount.Text + " " + GameTimer.Text + Environment.NewLine);
                 // запись массива байтов в файл
                 fstream.Write(array, 0, array.Length);
             }
